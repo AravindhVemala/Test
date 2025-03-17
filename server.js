@@ -4,18 +4,7 @@ const cors = require("cors");
 require("dotenv").config();
 
 const app = express();
-// const PORT = process.env.PORT || 3000; // Use Render's port or default to 3000
-// app.listen(PORT, () => {
-//     console.log(`Server is running on http://localhost:${PORT}`);
-// });
-
-const PORT = process.env.PORT || 3000; // Use Render's assigned port
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
-
-
-// const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json()); // Allows handling JSON data
