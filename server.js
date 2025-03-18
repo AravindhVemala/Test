@@ -61,3 +61,41 @@ app.listen(PORT, () => {
 app.get("/", (req, res) => {
     res.send("Welcome to the To-Do List API! Use /tasks to interact.");
 });
+
+
+
+
+// Middleware to verify Firebase token
+async function verifyToken(req, res, next) {
+  const token = req.headers.authorization;
+  if (!token) return res.status(401).json({ error: "Unauthorized" });
+
+  try {
+    const decodedToken = await admin.auth().verifyIdToken(token);
+    req.userId = decodedToken.uid;
+    next();
+  } catch (error) {
+    res.status(401).json({ error: "Invalid Token" });
+  }
+}
+
+// 🔹 Get tasks for the logged-in user
+router.get('/tasks', verifyToken, async (req, res) => {
+  const tasks = await Task.find({ userId: req.userId });
+  res.json(tasks);
+});
+
+// 🔹 Add a task for the logged-in user
+router.post('/tasks', verifyToken, async (req, res) => {
+  const newTask = new Task({ text: req.body.text, userId: req.userId });
+  await newTask.save();
+  res.json(newTask);
+});
+
+// 🔹 Delete a task
+router.delete('/tasks/:id', verifyToken, async (req, res) => {
+  await Task.deleteOne({ _id: req.params.id, userId: req.userId });
+  res.json({ success: true });
+});
+
+module.exports = router;
