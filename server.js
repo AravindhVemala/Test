@@ -64,6 +64,8 @@ app.get("/", (req, res) => {
 
 
 
+// Initialize Express Router
+const router = express.Router();
 
 // Middleware to verify Firebase token
 async function verifyToken(req, res, next) {
