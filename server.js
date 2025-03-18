@@ -57,3 +57,7 @@ app.delete("/tasks/:id", async (req, res) => {
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
+
+app.get("/", (req, res) => {
+    res.send("Welcome to the To-Do List API! Use /tasks to interact.");
+});
