@@ -87,11 +87,39 @@ router.get('/tasks', verifyToken, async (req, res) => {
   res.json(tasks);
 });
 
+router.get("/tasks", verifyToken, async (req, res) => {
+    const userId = req.user.id; // Get logged-in user's ID
+
+    try {
+        const tasks = await Task.find({ userId }); // Fetch only user's tasks
+        res.json(tasks);
+    } catch (error) {
+        res.status(500).json({ error: "Failed to fetch tasks" });
+    }
+});
+
 // 🔹 Add a task for the logged-in user
 router.post('/tasks', verifyToken, async (req, res) => {
   const newTask = new Task({ text: req.body.text, userId: req.userId });
   await newTask.save();
   res.json(newTask);
+});
+
+router.post("/tasks", verifyToken, async (req, res) => {
+    const { text } = req.body;
+    const userId = req.user.id; // Get the logged-in user's ID
+
+    if (!userId) {
+        return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    try {
+        const newTask = new Task({ text, userId });
+        await newTask.save();
+        res.status(201).json(newTask);
+    } catch (error) {
+        res.status(500).json({ error: "Failed to add task" });
+    }
 });
 
 // 🔹 Delete a task
@@ -101,3 +129,4 @@ router.delete('/tasks/:id', verifyToken, async (req, res) => {
 });
 
 module.exports = router;
+
